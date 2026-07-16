@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shared file — DocuVault</title>
+<script>document.documentElement.setAttribute('data-theme', localStorage.getItem('dv_theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));</script>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div style="min-height:100vh; display:flex; align-items:center; justify-content:center; padding:2rem;">
+    <div class="card card-pad" style="max-width:480px; width:100%; text-align:center;" id="link-card">
+      <span class="seal spin" style="margin:0 auto 1rem;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 5v6c0 5 3.5 8.5 8 11 4.5-2.5 8-6 8-11V5l-8-3Z"/></svg></span>
+      <p>Resolving shared link…</p>
+    </div>
+  </div>
+
+<script src="js/theme.js"></script>
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script>
+(async function () {
+  const card = document.getElementById('link-card');
+  const token = new URLSearchParams(location.search).get('token');
+  if (!token) {
+    card.innerHTML = '<h3>Link not found</h3><p class="text-sm">No share token was provided.</p>';
+    return;
+  }
+  try {
+    const res = await fetch(`${DOCUVAULT_CONFIG.API_BASE_URL}/shares/public/${token}`);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'This link is invalid or has expired.');
+
+    card.innerHTML = `
+      <span class="seal" style="margin:0 auto 1rem;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h9l5 5v15H6z"/><path d="M15 2v5h5"/></svg></span>
+      <h3>${data.file.original_name}</h3>
+      <p class="text-sm text-faint">${(data.file.size_bytes / 1024).toFixed(0)} KB · shared as "${data.permission}"</p>
+      <p class="text-sm">Log in to DocuVault to view this file with your account, or ask the sender to invite you directly for full access.</p>
+      <a href="login.html" class="btn btn-primary" style="margin-top:0.8rem;">Log in to continue</a>
+    `;
+  } catch (err) {
+    card.innerHTML = `<h3>Link unavailable</h3><p class="text-sm">${err.message}</p>`;
+  }
+})();
+</script>
+</body>
+</html>

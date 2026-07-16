@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Log in — DocuVault</title>
+<script>document.documentElement.setAttribute('data-theme', localStorage.getItem('dv_theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));</script>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="auth-shell">
+  <div class="auth-visual">
+    <div class="row gap-1">
+      <span class="seal seal-sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 5v6c0 5 3.5 8.5 8 11 4.5-2.5 8-6 8-11V5l-8-3Z"/></svg></span>
+      <span style="font-family:var(--font-display); font-weight:600; font-size:1.15rem;">DocuVault</span>
+    </div>
+    <p class="quote">"Every file checksummed, every share accountable, every action logged. That's what a vault is supposed to feel like."</p>
+    <div class="text-xs" style="color:#6a6e94;">— Product principle #1</div>
+  </div>
+
+  <div class="auth-form-wrap">
+    <div class="auth-card">
+      <div class="brand-mark">
+        <span class="seal seal-sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 5v6c0 5 3.5 8.5 8 11 4.5-2.5 8-6 8-11V5l-8-3Z"/></svg></span>
+        <span>DocuVault</span>
+      </div>
+      <h2>Welcome back</h2>
+      <p class="text-soft" style="margin-bottom:1.6rem;">Log in to reach your files.</p>
+
+      <form id="login-form" novalidate>
+        <div class="field">
+          <label for="email">Email address</label>
+          <input class="input" type="email" id="email" name="email" placeholder="you@company.com" autocomplete="email" required>
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <input class="input" type="password" id="password" name="password" placeholder="••••••••" autocomplete="current-password" required>
+        </div>
+        <div class="row" style="justify-content:space-between; margin-bottom:1.3rem;">
+          <label class="checkbox-row"><input type="checkbox" id="remember"> Remember me</label>
+          <a href="#" class="text-sm" style="color:var(--signal); font-weight:600;">Forgot password?</a>
+        </div>
+        <button class="btn btn-primary" type="submit" style="width:100%;" id="submit-btn">
+          <span id="submit-label">Log in</span>
+        </button>
+      </form>
+
+      <div class="divider-or">or</div>
+      <button class="btn btn-ghost" style="width:100%;" id="demo-btn">Try the demo account</button>
+
+      <p class="auth-switch">Don't have an account? <a href="register.html">Create one</a></p>
+    </div>
+  </div>
+</div>
+
+<script src="js/theme.js"></script>
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/notifications.js"></script>
+<script src="js/auth.js"></script>
+</body>
+</html>
