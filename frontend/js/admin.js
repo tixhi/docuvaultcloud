@@ -9,29 +9,35 @@
     const body = document.getElementById('users-body');
     try {
       const { users } = await DVApi.get(`/users?search=${encodeURIComponent(search)}`);
-      if (!users.length) {
-        body.innerHTML = '<tr><td colspan="6" class="text-sm text-faint">No users found.</td></tr>';
+      if (!users || !users.length) {
+        body.innerHTML = '<tr><td colspan="6" class="text-sm text-muted" style="text-align:center; padding:2rem;">No users found.</td></tr>';
         return;
       }
       body.innerHTML = users
         .map(
           (u) => `
         <tr>
-          <td class="file-name-cell">
-            <div class="avatar" style="width:28px;height:28px;font-size:0.7rem;">${escapeHtml(u.full_name.charAt(0))}</div>
-            ${escapeHtml(u.full_name)}
-          </td>
-          <td class="text-sm">${escapeHtml(u.email)}</td>
           <td>
-            <select class="perm-select" data-role-user="${u.id}">
+            <div style="display:flex; align-items:center; gap:0.65rem;">
+              <div class="user-avatar" style="width:28px;height:28px;font-size:0.75rem;">${escapeHtml(u.full_name ? u.full_name.charAt(0).toUpperCase() : '?')}</div>
+              <span class="font-semibold text-sm">${escapeHtml(u.full_name || 'Unnamed')}</span>
+            </div>
+          </td>
+          <td class="text-sm text-muted mono">${escapeHtml(u.email)}</td>
+          <td>
+            <select class="form-select" style="width:115px; font-size:0.8rem; padding:0.35rem 0.5rem;" data-role-user="${u.id}">
               <option value="member" ${u.role === 'member' ? 'selected' : ''}>Member</option>
               <option value="manager" ${u.role === 'manager' ? 'selected' : ''}>Manager</option>
               <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>Admin</option>
             </select>
           </td>
           <td><span class="badge ${u.is_active ? 'badge-success' : 'badge-danger'}">${u.is_active ? 'Active' : 'Disabled'}</span></td>
-          <td class="mono text-faint text-sm">${new Date(u.created_at).toLocaleDateString()}</td>
-          <td><button class="btn btn-ghost btn-sm" data-toggle-active="${u.id}" data-active="${u.is_active}">${u.is_active ? 'Disable' : 'Enable'}</button></td>
+          <td class="mono text-muted text-sm">${new Date(u.created_at).toLocaleDateString()}</td>
+          <td>
+            <button class="btn btn-secondary btn-sm" data-toggle-active="${u.id}" data-active="${u.is_active}">
+              ${u.is_active ? 'Disable' : 'Enable'}
+            </button>
+          </td>
         </tr>`
         )
         .join('');
@@ -40,7 +46,7 @@
         sel.addEventListener('change', async () => {
           try {
             await DVApi.patch(`/users/${sel.dataset.roleUser}/role`, { role: sel.value });
-            DVToast.success('Role updated');
+            DVToast.success('Role updated successfully');
           } catch (err) {
             DVToast.error('Could not update role', err.message);
           }
@@ -51,7 +57,7 @@
           const isActive = btn.dataset.active === 'true';
           try {
             await DVApi.patch(`/users/${btn.dataset.toggleActive}/active`, { isActive: !isActive });
-            DVToast.success(isActive ? 'User disabled' : 'User enabled');
+            DVToast.success(isActive ? 'User disabled' : 'User activated');
             loadUsers(document.getElementById('user-search').value.trim());
           } catch (err) {
             DVToast.error('Could not update user', err.message);
@@ -67,18 +73,18 @@
     const body = document.getElementById('audit-body');
     try {
       const { logs } = await DVApi.get('/audit?limit=100');
-      if (!logs.length) {
-        body.innerHTML = '<tr><td colspan="4" class="text-sm text-faint">No audit entries yet.</td></tr>';
+      if (!logs || !logs.length) {
+        body.innerHTML = '<tr><td colspan="4" class="text-sm text-muted" style="text-align:center; padding:2rem;">No system audit entries logged yet.</td></tr>';
         return;
       }
       body.innerHTML = logs
         .map(
           (log) => `
         <tr>
-          <td class="text-sm">${escapeHtml(log.actor_name || 'System')}</td>
-          <td><span class="badge badge-signal">${escapeHtml(log.action)}</span></td>
-          <td class="mono text-faint text-sm">${log.target_type ? `${log.target_type}:${(log.target_id || '').toString().slice(0, 8)}` : '—'}</td>
-          <td class="mono text-faint text-sm">${DVLayout.timeAgo(log.created_at)}</td>
+          <td class="text-sm font-semibold">${escapeHtml(log.actor_name || 'System')}</td>
+          <td><span class="badge badge-brand mono">${escapeHtml(log.action)}</span></td>
+          <td class="mono text-muted text-sm">${log.target_type ? `${log.target_type}:${(log.target_id || '').toString().slice(0, 8)}` : '—'}</td>
+          <td class="mono text-muted text-sm">${DVLayout.timeAgo(log.created_at)}</td>
         </tr>`
         )
         .join('');
@@ -121,10 +127,12 @@
 
     if (user.role !== 'admin' && user.role !== 'manager') {
       document.getElementById('admin-gate').innerHTML = `
-        <div class="empty-state">
-          <span class="seal" style="margin:0 auto 1rem;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 5v6c0 5 3.5 8.5 8 11 4.5-2.5 8-6 8-11V5l-8-3Z"/></svg></span>
-          <h3>Restricted area</h3>
-          <p class="text-sm">This panel is only available to managers and admins.</p>
+        <div style="text-align:center; padding:4rem 1.5rem; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg);">
+          <div class="metric-icon" style="margin:0 auto 1.25rem; background:var(--danger-bg); color:var(--danger);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 5v6c0 5 3.5 8.5 8 11 4.5-2.5 8-6 8-11V5l-8-3Z"/></svg>
+          </div>
+          <h3>Restricted Administration Area</h3>
+          <p class="text-sm" style="max-width:440px; margin:0 auto;">This management panel is only accessible to users with Manager or Admin privileges.</p>
         </div>`;
       document.getElementById('loading-screen').classList.add('hide');
       return;

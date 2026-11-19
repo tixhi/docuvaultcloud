@@ -3,52 +3,78 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Create account — DocuVault</title>
+<title>Create Account — DocuVault</title>
 <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('dv_theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));</script>
 <link rel="stylesheet" href="css/styles.css">
+<style>
+  .auth-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1.5rem;
+    background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.12) 0%, transparent 60%), var(--bg);
+  }
+  .auth-box {
+    width: 100%;
+    max-width: 460px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    padding: 2.5rem 2rem;
+    box-shadow: var(--shadow-lg), var(--shadow-glow);
+  }
+  .auth-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .auth-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+</style>
 </head>
 <body>
 
-<div class="auth-shell">
-  <div class="auth-visual">
-    <div class="row gap-1">
-      <span class="seal seal-sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 5v6c0 5 3.5 8.5 8 11 4.5-2.5 8-6 8-11V5l-8-3Z"/></svg></span>
-      <span style="font-family:var(--font-display); font-weight:600; font-size:1.15rem;">DocuVault</span>
-    </div>
-    <p class="quote">"Storage quotas, role tiers, and audit trails — set up once, ready before your first upload."</p>
-    <div class="text-xs" style="color:#6a6e94;">— Product principle #2</div>
-  </div>
-
-  <div class="auth-form-wrap">
-    <div class="auth-card">
-      <div class="brand-mark">
-        <span class="seal seal-sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 5v6c0 5 3.5 8.5 8 11 4.5-2.5 8-6 8-11V5l-8-3Z"/></svg></span>
-        <span>DocuVault</span>
+<div class="auth-wrapper">
+  <div class="auth-box">
+    <div class="auth-header">
+      <div class="auth-logo">
+        <span class="seal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 5v6c0 5 3.5 8.5 8 11 4.5-2.5 8-6 8-11V5l-8-3Z"/></svg>
+        </span>
+        <span style="font-size:1.35rem; font-weight:700; color:var(--ink);">DocuVault</span>
       </div>
-      <h2>Create your account</h2>
-      <p class="text-soft" style="margin-bottom:1.6rem;">Start with 5 GB of vault space, free.</p>
+      <h2>Get started with DocuVault</h2>
+      <p style="font-size:0.9rem;">Enterprise document storage with zero-knowledge custody</p>
+    </div>
 
-      <form id="register-form" novalidate>
-        <div class="field">
-          <label for="fullName">Full name</label>
-          <input class="input" type="text" id="fullName" name="fullName" placeholder="Jordan Reyes" autocomplete="name" required>
-        </div>
-        <div class="field">
-          <label for="email">Email address</label>
-          <input class="input" type="email" id="email" name="email" placeholder="you@company.com" autocomplete="email" required>
-        </div>
-        <div class="field">
-          <label for="password">Password</label>
-          <input class="input" type="password" id="password" name="password" placeholder="At least 8 characters" autocomplete="new-password" required minlength="8">
-          <span class="field-hint">Use 8+ characters. Mix in a number for good measure.</span>
-        </div>
-        <label class="checkbox-row" style="margin-bottom:1.3rem;"><input type="checkbox" required> I agree to the Terms and Privacy Policy</label>
-        <button class="btn btn-primary" type="submit" style="width:100%;" id="submit-btn">
-          <span id="submit-label">Create account</span>
-        </button>
-      </form>
+    <form id="register-form" novalidate>
+      <div class="form-group">
+        <label class="form-label" for="fullName">Full Name</label>
+        <input class="form-control" type="text" id="fullName" name="fullName" placeholder="Jane Doe" autocomplete="name" required>
+      </div>
 
-      <p class="auth-switch">Already have an account? <a href="login.html">Log in</a></p>
+      <div class="form-group">
+        <label class="form-label" for="email">Work Email</label>
+        <input class="form-control" type="email" id="email" name="email" placeholder="jane@company.com" autocomplete="email" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <input class="form-control" type="password" id="password" name="password" placeholder="At least 8 characters" autocomplete="new-password" required>
+        <span class="form-hint">Must contain at least 8 characters.</span>
+      </div>
+
+      <button class="btn btn-primary" type="submit" style="width:100%; margin-top:0.5rem;" id="submit-btn">
+        <span id="submit-label">Create Your Vault</span>
+      </button>
+    </form>
+
+    <div style="text-align:center; margin-top:2rem; font-size:0.88rem; color:var(--ink-soft);">
+      Already have an account? <a href="login.html" style="font-weight:600;">Sign in</a>
     </div>
   </div>
 </div>

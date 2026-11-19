@@ -1,7 +1,30 @@
-node_modules/
+# Environment
 .env
-backend/storage/
-*.log
-.DS_Store
 backend/.env
 frontend/.env
+*.env.local
+
+# Build artifacts
+target/
+backend/target/
+*.class
+*.jar
+*.war
+
+# Storage & Uploads
+backend/storage/
+storage/
+
+# Node / JS
+node_modules/
+package-lock.json
+
+# Logs
+*.log
+
+# IDE & OS
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db

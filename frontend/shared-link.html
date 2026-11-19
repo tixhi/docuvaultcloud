@@ -3,17 +3,41 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shared file — DocuVault</title>
+<title>Shared Document — DocuVault</title>
 <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('dv_theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));</script>
 <link rel="stylesheet" href="css/styles.css">
+<style>
+  .guest-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1.5rem;
+    background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.12) 0%, transparent 60%), var(--bg);
+  }
+  .guest-box {
+    width: 100%;
+    max-width: 480px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    padding: 2.5rem 2rem;
+    box-shadow: var(--shadow-lg), var(--shadow-glow);
+    text-align: center;
+  }
+</style>
 </head>
 <body>
-  <div style="min-height:100vh; display:flex; align-items:center; justify-content:center; padding:2rem;">
-    <div class="card card-pad" style="max-width:480px; width:100%; text-align:center;" id="link-card">
-      <span class="seal spin" style="margin:0 auto 1rem;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 5v6c0 5 3.5 8.5 8 11 4.5-2.5 8-6 8-11V5l-8-3Z"/></svg></span>
-      <p>Resolving shared link…</p>
-    </div>
+
+<div class="guest-wrapper">
+  <div class="guest-box" id="link-card">
+    <span class="seal spin" style="margin:0 auto 1.25rem;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 5v6c0 5 3.5 8.5 8 11 4.5-2.5 8-6 8-11V5l-8-3Z"/></svg>
+    </span>
+    <h3>Resolving Secure Link...</h3>
+    <p class="text-sm">Connecting to DocuVault cryptographic ledger...</p>
   </div>
+</div>
 
 <script src="js/theme.js"></script>
 <script src="js/config.js"></script>
@@ -23,7 +47,7 @@
   const card = document.getElementById('link-card');
   const token = new URLSearchParams(location.search).get('token');
   if (!token) {
-    card.innerHTML = '<h3>Link not found</h3><p class="text-sm">No share token was provided.</p>';
+    card.innerHTML = '<h3>Link Not Found</h3><p class="text-sm">No valid share token was provided in the URL.</p><a href="index.html" class="btn btn-secondary" style="margin-top:1rem;">Back to Home</a>';
     return;
   }
   try {
@@ -31,15 +55,28 @@
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'This link is invalid or has expired.');
 
+    const sizeFormatted = (data.file.size_bytes / (1024 * 1024)).toFixed(2) + ' MB';
     card.innerHTML = `
-      <span class="seal" style="margin:0 auto 1rem;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h9l5 5v15H6z"/><path d="M15 2v5h5"/></svg></span>
-      <h3>${data.file.original_name}</h3>
-      <p class="text-sm text-faint">${(data.file.size_bytes / 1024).toFixed(0)} KB · shared as "${data.permission}"</p>
-      <p class="text-sm">Log in to DocuVault to view this file with your account, or ask the sender to invite you directly for full access.</p>
-      <a href="login.html" class="btn btn-primary" style="margin-top:0.8rem;">Log in to continue</a>
+      <div class="metric-icon" style="margin:0 auto 1.25rem; width:56px; height:56px;">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      </div>
+      <h3 style="margin-bottom:0.4rem; word-break:break-word;">${data.file.original_name}</h3>
+      <p class="text-sm mono text-muted" style="margin-bottom:1.25rem;">${sizeFormatted} &bull; Permission: <span class="badge badge-brand">${data.permission}</span></p>
+      <p class="text-sm" style="margin-bottom:1.75rem;">This file was shared with you securely via DocuVault. Sign in to your workspace to save or collaborate.</p>
+      <div style="display:flex; flex-direction:column; gap:0.75rem;">
+        <a href="login.html" class="btn btn-primary">Sign in to Access</a>
+        <a href="index.html" class="btn btn-secondary">Learn more about DocuVault</a>
+      </div>
     `;
   } catch (err) {
-    card.innerHTML = `<h3>Link unavailable</h3><p class="text-sm">${err.message}</p>`;
+    card.innerHTML = `
+      <div class="metric-icon" style="margin:0 auto 1.25rem; background:var(--danger-bg); color:var(--danger);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+      </div>
+      <h3>Link Unavailable</h3>
+      <p class="text-sm" style="margin-bottom:1.5rem;">${err.message}</p>
+      <a href="index.html" class="btn btn-secondary">Back to Home</a>
+    `;
   }
 })();
 </script>

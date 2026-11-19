@@ -1,10 +1,10 @@
 (function () {
   const CATEGORY_COLORS = {
-    images: '#3e7cb1',
-    pdf: '#b4453a',
-    documents: '#3f8f6f',
-    video: '#c98a2e',
-    other: '#82869c',
+    images: '#6366f1',
+    pdf: '#ef4444',
+    documents: '#10b981',
+    video: '#f59e0b',
+    other: '#8b5cf6',
   };
   const CATEGORY_LABELS = {
     images: 'Images',
@@ -53,9 +53,9 @@
       document.getElementById('donut-total').textContent = pct + '%';
 
       // --- Donut chart ---
-      const segments = usage.byCategory
+      const segments = (usage.byCategory || [])
         .filter((c) => Number(c.total_bytes) > 0)
-        .map((c) => ({ value: Number(c.total_bytes), color: CATEGORY_COLORS[c.category] || '#82869c', category: c.category }));
+        .map((c) => ({ value: Number(c.total_bytes), color: CATEGORY_COLORS[c.category] || '#8b5cf6', category: c.category }));
       DVCharts.drawDonut(document.getElementById('donut-chart'), segments);
 
       const legend = document.getElementById('donut-legend');
@@ -70,26 +70,25 @@
         </div>`
             )
             .join('')
-        : '<p class="text-faint text-sm">No files yet — upload something to see the breakdown.</p>';
+        : '<p class="text-faint text-sm">No files yet — upload files to see the breakdown.</p>';
 
       // --- Activity feed ---
       const list = document.getElementById('activity-list');
-      if (!usage.recent.length) {
+      if (!usage.recent || !usage.recent.length) {
         list.innerHTML = `
-          <div class="empty-state" style="padding:2rem 1rem;">
-            <span class="seal seal-sm" style="margin:0 auto 0.8rem;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></span>
-            <p class="text-sm">Nothing here yet. <a href="upload.html" style="color:var(--signal); font-weight:600;">Upload your first file</a>.</p>
+          <div class="empty-state" style="padding:2rem 1rem; text-align:center;">
+            <p class="text-sm text-muted">Nothing here yet. <a href="upload.html" style="color:var(--brand); font-weight:600;">Upload your first file</a>.</p>
           </div>`;
       } else {
         list.innerHTML = usage.recent
           .map((f) => {
             const icon = iconFor(f.mime_type);
             return `
-            <div class="activity-item">
-              <span class="file-icon ${icon.cls}" style="width:32px;height:32px;">${icon.svg}</span>
-              <div class="flex-1">
-                <b class="text-sm">${escapeHtml(f.original_name)}</b>
-                <div class="when">${DVLayout.formatBytes(f.size_bytes)} · updated ${DVLayout.timeAgo(f.updated_at)}</div>
+            <div class="activity-item" style="display:flex; align-items:center; gap:0.75rem; padding:0.6rem 0; border-bottom:1px solid var(--border);">
+              <span class="file-icon ${icon.cls}" style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;background:var(--bg-sunken);border-radius:var(--radius-sm);color:var(--brand);">${icon.svg}</span>
+              <div style="flex:1; min-width:0;">
+                <b class="text-sm" style="display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(f.original_name)}</b>
+                <div class="text-xs text-muted mono">${DVLayout.formatBytes(f.size_bytes)} &bull; updated ${DVLayout.timeAgo(f.updated_at)}</div>
               </div>
             </div>`;
           })
