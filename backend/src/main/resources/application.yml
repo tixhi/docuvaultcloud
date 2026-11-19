@@ -59,6 +59,9 @@ spring:
   config:
     activate:
       on-profile: local
+  sql:
+    init:
+      mode: never
   datasource:
     url: jdbc:h2:mem:docuvault;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=PostgreSQL
     username: sa
